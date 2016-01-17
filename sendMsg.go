@@ -52,12 +52,25 @@ func (m *MpWechat) GetFirstSendMsg(msg_page *WXMsgPageInfo) *RecvMessage {
 }
 
 func (m *MpWechat) SendText(userid, content string) error {
+	if !m.PrepareSendFlag {
+		m.PrepareMpSendMsg()
+	}
+
 	sndmsg := &SendMessage{"1", userid, content, "1", false}
 	m.ChanMpSendMsg <- sndmsg
 	return nil
 }
 
-func (m *MpWechat) SendTextBlock(userid, content string, timeout int) error {
+func (m *MpWechat) SendTextBlock(user_nickname, content string, timeout int) error {
+	userid, query_err := m.GetFanID(user_nickname)
+	if query_err != nil {
+		return errors.New("未知用户！")
+	}
+
+	if !m.PrepareSendFlag {
+		m.PrepareMpSendMsg()
+	}
+
 	if timeout <= 0 {
 		return m.SendText(userid, content)
 	}
@@ -88,12 +101,20 @@ func (m *MpWechat) SendTextBlock(userid, content string, timeout int) error {
 }
 
 func (m *MpWechat) SendImage(userid, filename string) error {
+	if !m.PrepareSendFlag {
+		m.PrepareMpSendMsg()
+	}
+
 	sndmsg := &SendMessage{"2", userid, filename, "1", false}
 	m.ChanMpSendMsg <- sndmsg
 	return nil
 }
 
 func (m *MpWechat) SendImageBlock(userid, filename string, timeout int) error {
+	if !m.PrepareSendFlag {
+		m.PrepareMpSendMsg()
+	}
+
 	if timeout <= 0 {
 		return m.SendImage(userid, filename)
 	}
