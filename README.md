@@ -30,7 +30,7 @@ if fan_err != nil {
 ```
 
 ## 发送消息
-### 发送消息前初始化
+### 发送消息前初始化(可省略)
 ```go
 mp_wechat.PrepareMpSendMsg()
 ```
